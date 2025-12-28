@@ -42,17 +42,12 @@
       <div class="flex-1 bg-white rounded-2xl shadow-lg p-6 transition hover:shadow-2xl">
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Files in Progress</h2>
         <div class="space-y-4">
-         <QueueList
-           :items="queue"
-            @retry="retryFile"
-            @download="downloadFile"
-         />
+          <QueueList v-if="queue.length > 0" :items="queue" @retry="retryFile" @download="downloadFile" />
 
-
-          <!-- EMPTY STATE -->
-          <div v-if="queue.length === 0" class="p-4 text-center bg-gray-50 border rounded-xl text-gray-400">
+          <div v-else class="p-4 text-center bg-gray-50 border rounded-xl text-gray-400">
             No files in progress
           </div>
+
         </div>
 
       </div>
@@ -65,6 +60,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import ImageCropper from '../components/ImageCropper.vue'
 import { getDeviceInfo } from "../utils/DeviceInfo";
 import QueueList from '../components/QueueList.vue';
+import { DocumentService } from "../services/document.service";
 
 const { deviceId, address } = getDeviceInfo();
 
@@ -89,7 +85,7 @@ const saveCropped = base64 => {
 }
 
 const retryFile = async (id) => {
-  const res = await fetch(`http://localhost:8000/api/v1/image/retry/${id}`, { method: "POST" });
+  const res = await DocumentService.retry(id);
   console.log(res);
   getListCropPage();
 }
@@ -106,14 +102,11 @@ const downloadFile = (file) => {
 
 const getListCropPage = async () => {
   try {
-    const res = await fetch(
-      `http://localhost:8000/api/v1/image/device?device_id=${deviceId}&mode=crop`
-    );
+    const res = await DocumentService.getQueue("crop", deviceId);
 
-    const data = await res.json()
-    console.log(data.images)
-    if (data.images.length > 0) {
-      queue.value = data.images.map(item => ({
+    const data = res.images
+    if (data.length > 0) {
+      queue.value = data.map(item => ({
         id: item.id,
         filename: item.original_filename,
         file_url: item.processed_url,
@@ -124,6 +117,7 @@ const getListCropPage = async () => {
     }
 
   } catch (err) {
+    queue.value = []
     console.error("Failed to fetch crop list:", err)
   }
 }
@@ -132,23 +126,13 @@ const upload = async () => {
   if (!result.value) return
   try {
 
-    const res = await fetch("http://localhost:8000/api/v1/image/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify({
-        image_base64: result.value,
-        mode: "crop",
-        device_id: deviceId,
-        device_address: address
-      })
+    const res = await DocumentService.upload({
+      image_base64: result.value,
+      mode: "crop",
+      device_id: deviceId,
+      device_address: address
     })
 
-
-    console.log(res)
-    const data = await res.json()
     result.value = null;
     imageUrl.value = null;
     await getListCropPage()
@@ -177,7 +161,6 @@ onUnmounted(() => {
 
 
 <style>
-/* Fade transition for cropper/result appearance */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

@@ -4,10 +4,10 @@
     <!-- Header -->
     <div class="max-w-4xl w-full text-center mb-12">
       <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-2">
-        Image to PDF Converter
+        Word to PDF Converter
       </h1>
       <p class="text-gray-600 sm:text-lg">
-        Convert your images into a single high-quality PDF file instantly.
+        Convert your Word documents (.doc, .docx) to PDF instantly.
       </p>
     </div>
 
@@ -22,25 +22,35 @@
           <label
             for="fileUpload"
             class="cursor-pointer bg-gray-800 hover:bg-gray-900 text-white font-semibold px-8 py-3 rounded-xl shadow-md transition">
-            Choose Image
+            Choose Word File
           </label>
-          <input id="fileUpload" type="file" accept="image/*" @change="onFile" class="hidden" />
 
-          <p v-if="fileName" class="mt-3 text-gray-700 font-medium">{{ fileName }}</p>
+          <input
+            id="fileUpload"
+            type="file"
+            accept=".doc,.docx"
+            @change="onFile"
+            class="hidden"
+          />
+
+          <p v-if="fileName" class="mt-3 text-gray-700 font-medium">
+            {{ fileName }}
+          </p>
         </div>
 
         <!-- Preview -->
         <transition name="fade">
           <div
-            v-if="imageUrl"
+            v-if="file"
             class="w-full bg-white rounded-2xl shadow-md p-8 flex flex-col items-center gap-6 hover:shadow-lg transition">
 
             <h2 class="text-2xl font-semibold text-gray-900">
-              Preview Image
+              Ready to Convert
             </h2>
 
-            <img :src="imageUrl"
-                 class="max-w-full rounded-xl shadow object-contain border border-gray-200" />
+            <div class="flex items-center gap-3 text-gray-700">
+              📄 <span>{{ fileName }}</span>
+            </div>
 
             <button
               @click="upload"
@@ -53,9 +63,11 @@
 
       </div>
 
-      <!-- RIGHT SIDE : QUEUE LIST -->
+      <!-- RIGHT SIDE -->
       <div class="flex-1 bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Files in Progress</h2>
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">
+          Files in Progress
+        </h2>
 
         <queue-list
           :items="queue"
@@ -65,93 +77,97 @@
       </div>
 
     </div>
-
   </div>
 </template>
-
 <script setup>
+  import { DocumentService } from "../services/document.service";
+
 import { ref, onMounted, onUnmounted } from "vue";
 import { getDeviceInfo } from "../utils/DeviceInfo";
-import { DocumentService } from "../services/document.service"; 
 import QueueList from "../components/QueueList.vue";
+const token = localStorage.getItem("token");
 
 const { deviceId, address } = getDeviceInfo();
 
-const imageUrl = ref(null);
+const file = ref(null);
+const fileBase64 = ref(null);
 const fileName = ref("");
 const queue = ref([]);
-const loading = ref(false);
 
 const onFile = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  fileName.value = file.name;
+  const selected = e.target.files[0];
+  if (!selected) return;
+
+  file.value = selected;
+  fileName.value = selected.name;
 
   const reader = new FileReader();
-  reader.onload = () => { imageUrl.value = reader.result; };
-  reader.readAsDataURL(file);
+  reader.onload = () => {
+    fileBase64.value = reader.result; 
+  };
+  reader.readAsDataURL(selected);
 };
 
-const getList = async () => {
-  try {
-    const data = await DocumentService.getQueue("convert_pdf",deviceId);
-    if (data.images) {
-      queue.value = data.images.map((item) => ({
-        id: item.id,
-        filename: item.original_filename,
-        file_url: item.processed_url,
-        status: item.status,
-        mode: item.mode
-      }));
-    }
-  } catch (err) {
-    console.error("Fetch Queue Failed:", err);
-  }
-};
 
 const upload = async () => {
-  if (!imageUrl.value) return;
-  loading.value = true;
+  if (!file.value) return;
 
-  try {
-    await DocumentService.upload({
-      image_base64: imageUrl.value,
-      mode: "convert_pdf",
+  const reader = new FileReader();
+
+  reader.onload = async () => {
+    const base64 = reader.result; 
+
+    const data = {
+      image_base64: base64,
+      mode: "word_to_pdf",
       device_id: deviceId,
       device_address: address,
-    });
-    
-    imageUrl.value = null;
+      original_filename: fileName.value,
+    };
+
+   await DocumentService.upload(data);
+
+    file.value = null;
     fileName.value = "";
-    getList(); 
-  } catch (err) {
-    alert("Upload Failed: " + (err.response?.data?.message || "Internal Server Error"));
-  } finally {
-    loading.value = false;
-  }
+  };
+
+  reader.readAsDataURL(file.value);
+};
+
+
+const getList = async () => {
+  const res = await DocumentService.getQueue("word_to_pdf", deviceId);
+  const data = res.images
+
+  queue.value = data.map(item => ({
+    id: item.id,
+    filename: item.original_filename,
+    file_url: item.processed_url,
+    status: item.status,
+    mode: item.mode
+  }));
 };
 
 const retryFile = async (id) => {
-  try {
-    await DocumentService.retry(id);
-    getList();
-  } catch (err) {
-    console.error("Retry Failed:", err);
-  }
+  await DocumentService.retry(id);
+  getList();
 };
-
 const downloadFile = (file) => {
-  DocumentService.download(file.file_url, file.filename);
+  const a = document.createElement("a");
+  a.href = file.file_url;
+  a.download = file.filename || "output.pdf";
+  a.click();
 };
 
-let intervalId = null;
+let intervalId;
+
 onMounted(() => {
   getList();
   intervalId = setInterval(getList, 3000);
 });
 
 onUnmounted(() => {
-  if (intervalId) clearInterval(intervalId);
+  clearInterval(intervalId);
 });
 </script>
 

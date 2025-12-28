@@ -6,9 +6,11 @@
       <!-- Branding -->
       <div class="flex flex-col items-center md:items-start">
         <h2 class="text-2xl font-bold text-white mb-2">MyDocEase</h2>
-        <p class="text-gray-400 text-sm">
-          Fast and reliable file tools. Crop & compress your files online effortlessly.
-        </p>
+      <p class="text-gray-400 text-sm">
+      Powerful, efficient, and dependable tools to manage, 
+      convert, and optimize your files online — all from a secure and intuitive platform.
+    </p>
+
       </div>
 
       <!-- Quick Links -->

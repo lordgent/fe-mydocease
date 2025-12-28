@@ -34,7 +34,7 @@
               class="w-full h-2 bg-gray-300 rounded-lg accent-indigo-600" />
             <p class="text-gray-600">Selected Quality: {{ (q * 100).toFixed(0) }}%</p>
 
-            <button @click="upload()" 
+            <button @click="upload()"
               class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed">
               Compress
             </button>
@@ -57,11 +57,7 @@
 
       <div class="flex-1 bg-white rounded-2xl shadow-md p-6 transition hover:shadow-lg">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Files in Progress</h2>
-        <queue-list
-           :items="queue"
-            @retry="retryFile"
-            @download="downloadFile"
-         />
+        <queue-list :items="queue" @retry="retryFile" @download="downloadFile" />
       </div>
 
     </div>
@@ -72,8 +68,10 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { getDeviceInfo } from "../utils/DeviceInfo";
 import QueueList from '../components/QueueList.vue';
+import { DocumentService } from "../services/document.service";
 
 const { deviceId, address } = getDeviceInfo();
+const token = localStorage.getItem("token");
 
 const imageUrl = ref(null)
 const result = ref(null)
@@ -92,50 +90,36 @@ const onFile = (e) => {
 
 const getListCompress = async () => {
   try {
-    const res = await fetch(
-      `http://localhost:8000/api/v1/image/device?device_id=${deviceId}&mode=compress`
-    );
+    const res = await DocumentService.getQueue("compress",deviceId,)
+    const data = res.images;
 
-    const data = await res.json()
-    console.log(data.images)
-    if (data.images.length > 0) {
-      queue.value = data.images.map(item => ({
+    if (data.length > 0) {
+      queue.value = data.map(item => ({
         id: item.id,
         filename: item.original_filename,
         file_url: item.processed_url,
         status: item.status,
         mode: item.mode,
       }));
-
     }
-
   } catch (err) {
-    console.error("Failed to fetch crop list:", err)
+    console.error("Failed to fetch compress list:", err);
   }
 }
 
 
 const retryFile = async (id) => {
-  const res = await fetch(`http://localhost:8000/api/v1/image/retry/${id}`, { method: "POST" });
+  const res = await DocumentService.retry(id)
   console.log(res);
-  getListCropPage();
+  getListCompress();
 }
-
-const downloadFile = (file) => {
-  const a = document.createElement('a');
-  a.href = file.file_url;
-  a.download = file.filename || "download";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-};
 
 const upload = async () => {
   if (!imageUrl.value) return;
 
   try {
     let data = {
-      image_base64: imageUrl.value, 
+      image_base64: imageUrl.value,
       mode: "compress",
       quality: Math.round(q.value * 100),
       device_id: deviceId,
@@ -143,29 +127,16 @@ const upload = async () => {
     };
 
     console.log("DATA SENT TO BACKEND:", data);
-
-    const res = await fetch("http://localhost:8000/api/v1/image/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
-
-    const response = await res.json();
-    console.log("Upload Response:", response);
-
+    const res = await DocumentService.upload(data)
   } catch (err) {
     console.error("Upload Failed:", err);
   }
 };
 
-
 let intervalId = null
 
 onMounted(() => {
-   getListCompress()
+  getListCompress()
   intervalId = setInterval(() => {
     getListCompress()
   }, 3000)

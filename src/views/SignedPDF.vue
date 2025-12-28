@@ -18,7 +18,7 @@
       <!-- Right: Queue List -->
       <div class="flex-1 bg-white rounded-2xl shadow-md p-6 transition hover:shadow-lg">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Signed PDFs</h2>
-        <queue-list :items="queue" @retry="retryFile" @download="downloadFile" />
+        <queue-list :items="queue" @retry="retryFile" @download="downloadFile" :loading="loadingFetch"/>
       </div>
 
     </div>
@@ -30,9 +30,10 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { getDeviceInfo } from "../utils/DeviceInfo";
 import PDFSignature from '../components/PDFSignature.vue';
 import QueueList from '../components/QueueList.vue';
+import { DocumentService } from "../services/document.service";
 
 const { deviceId, address } = getDeviceInfo();
-
+const loadingFetch = ref(true)
 const queue = ref([]);
 
 async function handlePDFExport(data) {
@@ -59,21 +60,7 @@ async function uploadToBackend(pdfBase64, filename) {
     };
 
     console.log("Sending signed PDF to backend...");
-
-    const res = await fetch("http://localhost:8000/api/v1/image/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
-
-
-    const response = await res.json();
-    console.log("Upload Response:", response);
-
-    // Refresh queue list immediately
+    const res = await DocumentService.upload(data);
     await getListSignedPDFs();
 
   } catch (err) {
@@ -82,33 +69,34 @@ async function uploadToBackend(pdfBase64, filename) {
 }
 
 async function getListSignedPDFs() {
-  try {
-    const res = await fetch(
-      `http://localhost:8000/api/v1/image/device?device_id=${deviceId}&mode=signed`
-    );
-    const data = await res.json();
-  if (data.images.length > 0) {
-      queue.value = data.images.map(item => ({
-        id: item.id,
-        filename: item.original_filename,
-        file_url: item.processed_url,
-        status: item.status,
-        mode: item.mode
-      }));
+  loadingFetch.value = true
 
-    }
+  try {
+    const res = await DocumentService.getQueue("signed",deviceId);
+
+    const data = res.images;
+
+    queue.value = (data || []).map(item => ({
+      id: item.id,
+      filename: item.original_filename,
+      file_url: item.processed_url,
+      status: item.status,
+      mode: item.mode
+    }))
+
   } catch (err) {
-    console.error("Failed to fetch signed PDFs:", err);
+    console.error("Failed to fetch signed PDFs:", err)
+    queue.value = [] 
+  } finally {
+    loadingFetch.value = false
   }
 }
+
 
 // Retry File
 async function retryFile(id) {
   try {
-    const res = await fetch(`http://localhost:8000/api/v1/pdf/retry/${id}`, {
-      method: "POST"
-    });
-    console.log(res);
+    const res = await DocumentService.retry(id);
     await getListSignedPDFs();
   } catch (err) {
     console.error("Retry failed:", err);
