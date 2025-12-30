@@ -1,133 +1,81 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col font-sans">
+  <div class="min-h-screen bg-white flex flex-col font-sans antialiased text-gray-900 overflow-x-hidden">
     
-    <section class="bg-white border-b border-gray-100">
-      <div class="max-w-6xl mx-auto px-6 py-20 text-center">
-        <div class="inline-block px-4 py-1.5 mb-6 text-sm font-semibold tracking-wide text-indigo-600 uppercase bg-indigo-50 rounded-full">
-          New: Powered Document Tools
+    <section class="bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-28 text-center">
+        <div class="inline-block px-3 py-1.5 mb-6 md:mb-10 text-[9px] md:text-[11px] font-black tracking-[0.2em] text-gray-800 uppercase border-2 border-gray-800 rounded">
+          Status: Ready for processing
         </div>
-        <h1 class="text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight">
-          MyDocEase
+        
+        <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-gray-900 mb-6 md:mb-8 tracking-tighter leading-none">
+          MyDocEase.
         </h1>
-        <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-          Effortless & Intelligent Document Management. Organize, convert, and secure your files with our next-generation browser tools.
+        
+        <p class="text-base sm:text-lg md:text-xl text-gray-700 mb-10 md:mb-12 max-w-2xl mx-auto leading-relaxed font-medium px-4">
+          Essential document tools built for speed and privacy. 
+          Process your files securely without leaving your browser.
         </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-          <button @click="startTrial"
-            class="bg-indigo-600 text-white font-bold px-10 py-4 rounded-xl shadow-lg hover:bg-indigo-700 hover:shadow-indigo-200 transition-all duration-300 transform hover:-translate-y-1">
+        
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6 px-6">
+          <button v-if="subscriptionData.trial_available" @click="startTrial"
+            class="w-full sm:w-auto bg-gray-800 text-white font-black px-10 py-4 md:px-12 md:py-5 rounded-full hover:bg-black transition-all duration-300 uppercase text-[10px] md:text-xs tracking-widest">
             Start Free Trial
           </button>
-          <a href="#tools" class="bg-white text-gray-700 border border-gray-200 font-bold px-10 py-4 rounded-xl hover:bg-gray-50 transition-all">
+          <a href="#tools"
+            class="w-full sm:w-auto bg-white text-gray-900 border-2 border-gray-800 font-black px-10 py-4 md:px-12 md:py-5 rounded-full hover:bg-gray-50 transition-all text-[10px] md:text-xs uppercase tracking-widest text-center">
             Explore Tools
           </a>
         </div>
       </div>
     </section>
 
-    <section class="bg-white border-b border-gray-100">
-      <div class="max-w-6xl mx-auto px-6 py-10">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div>
-            <p class="text-3xl font-bold text-gray-900">0.5s</p>
-            <p class="text-gray-500 text-sm">Processing Speed</p>
+    <section id="tools" class="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 gap-6">
+        <div class="text-left px-2">
+          <h2 class="text-[10px] md:text-xs font-black uppercase tracking-[0.3em] text-gray-500 mb-2">Capabilities</h2>
+          <h3 class="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">Available Tools.</h3>
+        </div>
+        <p class="text-gray-600 font-medium text-sm max-w-xs border-l-4 border-gray-800 pl-4 md:text-right md:border-l-0 md:border-r-4 md:pr-4 md:ml-auto">
+          All tools process files locally when possible. Your privacy is our default setting.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div v-for="tool in tools" :key="tool.title"
+          class="group bg-white p-8 md:p-10 border-2 border-gray-200 hover:border-gray-900 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-md"
+          @click="goTo(tool.path)">
+          <div class="mb-6 md:mb-8 opacity-40 group-hover:opacity-100 transition-opacity">
+             <img :src="tool.icon" class="w-8 md:w-10 grayscale" />
           </div>
-          <div>
-            <p class="text-3xl font-bold text-gray-900">100%</p>
-            <p class="text-gray-500 text-sm">Privacy Secured</p>
-          </div>
-          <div>
-            <p class="text-3xl font-bold text-gray-900">256-bit</p>
-            <p class="text-gray-500 text-sm">AES Encryption</p>
-          </div>
-          <div>
-            <p class="text-3xl font-bold text-gray-900">Zero</p>
-            <p class="text-gray-500 text-sm">Files Stored</p>
-          </div>
+          <h3 class="text-xs md:text-sm font-black uppercase tracking-[0.1em] mb-3 md:mb-4 text-gray-900">
+            {{ tool.title }}
+          </h3>
+          <p class="text-xs md:text-sm text-gray-600 leading-relaxed font-medium">
+            {{ tool.desc }}
+          </p>
         </div>
       </div>
     </section>
 
-    <section id="tools" class="max-w-6xl mx-auto px-6 py-20">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl font-extrabold text-gray-900 mb-4">Powerful File Tools</h2>
-        <p class="text-gray-600 max-w-xl mx-auto">Everything you need to manage your documents in one place, without installing any software.</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="group bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 cursor-pointer"
-          @click="goTo('/editor/signed-pdf')">
-          <div class="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-             <img src="/icons/signed.png" class="w-10 opacity-90" />
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-indigo-600">Sign PDF</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Add digital signatures to your documents securely using our encrypted signing tool.</p>
-        </div>
-
-        <div class="group bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 cursor-pointer"
-          @click="goTo('/editor/word-to-pdf')">
-          <div class="w-16 h-16 bg-indigo-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-             <img src="/icons/word-to-pdf.png" class="w-10 opacity-90" />
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-indigo-600">Word to PDF</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Convert .docx to high-quality PDF files while maintaining original fonts and layouts.</p>
-        </div>
-
-        <div class="group bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 cursor-pointer"
-          @click="goTo('/editor/convert-image-pdf')">
-          <div class="w-16 h-16 bg-purple-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-             <img src="/icons/img-to-pdf.png" class="w-10 opacity-90" />
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-indigo-600">Image to PDF</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Merge multiple JPG, PNG, or TIFF images into a single, organized PDF document.</p>
-        </div>
-
-        <div class="group bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 cursor-pointer" @click="goTo('/editor/crop')">
-          <div class="w-16 h-16 bg-yellow-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-             <img src="/icons/crop.png" class="w-10 opacity-90" />
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-indigo-600">Crop Image</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Smart cropping tool to resize and focus on the important parts of your images.</p>
-        </div>
-
-        <div class="group bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 cursor-pointer"
-          @click="goTo('/editor/compress')">
-          <div class="w-16 h-16 bg-green-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-             <img src="/icons/compress.png" class="w-10 opacity-90" />
-          </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-indigo-600">Compress Image</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">Reduce file size up to 90% without losing visible quality for faster web loading.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="bg-gray-100 py-20">
+    <section class="bg-gray-800 py-20 md:py-28 text-white">
       <div class="max-w-6xl mx-auto px-6">
-        <h2 class="text-3xl font-bold text-center mb-16 text-gray-900">Simple 3-Step Process</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div class="text-center">
-            <div class="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-indigo-200">1</div>
-            <h4 class="text-lg font-bold mb-3">Upload Document</h4>
-            <p class="text-gray-600">Drag and drop your files into our secure browser-based uploader.</p>
-          </div>
-          <div class="text-center">
-            <div class="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-indigo-200">2</div>
-            <h4 class="text-lg font-bold mb-3">Process Instantly</h4>
-            <p class="text-gray-600">Our servers handle the heavy lifting using advanced optimization algorithms.</p>
-          </div>
-          <div class="text-center">
-            <div class="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold shadow-lg shadow-indigo-200">3</div>
-            <h4 class="text-lg font-bold mb-3">Download & Save</h4>
-            <p class="text-gray-600">Your file is ready. We automatically delete your data for your security.</p>
+        <h2 class="text-[10px] md:text-xs font-black uppercase tracking-[0.5em] text-gray-400 mb-16 md:mb-24 text-center">How it works</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16">
+          <div v-for="(step, index) in steps" :key="index" class="relative group">
+            <div class="text-[70px] md:text-[100px] font-black text-white/10 absolute -top-12 md:-top-16 -left-2 md:-left-4 leading-none select-none group-hover:text-white/20 transition-colors">
+              {{ index + 1 }}
+            </div>
+            <h4 class="text-base md:text-lg font-black uppercase tracking-widest mb-3 md:mb-4 relative z-10">{{ step.title }}</h4>
+            <p class="text-gray-300 text-xs md:text-sm leading-relaxed relative z-10 font-medium">{{ step.desc }}</p>
           </div>
         </div>
       </div>
     </section>
-
-
 
     <SubscriptionList 
       :show="isModalOpen" 
-      bgColor="bg-slate-900" 
+      bgColor="bg-gray-900" 
       @close="isModalOpen = false"
       @select="handlePlanSelection" 
       :allowTrial="true" 
@@ -139,15 +87,38 @@
 import SubscriptionList from "@/components/SubscriptionList.vue";
 import { ref, onMounted } from "vue";
 
+const tools = [
+  { title: 'Sign PDF', desc: 'Apply secure digital signatures to your PDF documents.', icon: '/icons/signed.png', path: '/editor/signed-pdf' },
+  { title: 'Word to PDF', desc: 'Convert document formats while preserving layout integrity.', icon: '/icons/word-to-pdf.png', path: '/editor/word-to-pdf' },
+  { title: 'Image to PDF', desc: 'Consolidate multiple image formats into a single PDF file.', icon: '/icons/img-to-pdf.png', path: '/editor/convert-image-pdf' },
+  { title: 'Crop Utility', desc: 'Refine and adjust image dimensions with precision.', icon: '/icons/crop.png', path: '/editor/crop' },
+  { title: 'Compression', desc: 'Optimize file size for efficient storage and sharing.', icon: '/icons/compress.png', path: '/editor/compress' },
+];
+
+const steps = [
+  { title: 'Selection', desc: 'Select or drag your files into the secure browser interface.' },
+  { title: 'Execution', desc: 'The engine processes your request using local optimization.' },
+  { title: 'Retrieval', desc: 'Download your file. Data is purged immediately after session.' }
+];
+
 const token = localStorage.getItem("token");
 const isModalOpen = ref(false);
-const isTrial = ref(0);
 
-// API CALL: Check trial status
-const checkTrial = async () => {
-  if (!token) return;
+const subscriptionData = ref({
+  has_access: false,
+  trial_available: false,
+  status: 'none',
+  days_left: 0
+});
+
+const checkStatus = async () => {
+  if (!token) {
+    subscriptionData.value.trial_available = true;
+    return;
+  }
+
   try {
-    const res = await fetch(`http://localhost:8000/api/v1/status-trial`, {
+    const res = await fetch(`http://localhost:8000/api/v1/status-subscription`, {
       method: "GET",
       headers: {
         "Accept": "application/json",
@@ -155,21 +126,19 @@ const checkTrial = async () => {
       },
     });
     const response = await res.json();
-    isTrial.value = response.trial ? 1 : 0;
+    if (response.success) {
+      subscriptionData.value = response.subscription_data;
+    }
   } catch (err) {
-    console.error("Failed to fetch trial status:", err);
-    isTrial.value = 0;
+    console.error("Fetch error:", err);
   }
 };
 
-// NAVIGATION LOGIC
 const goTo = (path) => {
   if (!token) {
     window.location.href = '/login';
-  } else if (isTrial.value > 0) {
-    window.location.href = path;
   } else {
-    isModalOpen.value = true;
+    window.location.href = path;
   }
 };
 
@@ -182,12 +151,11 @@ const startTrial = () => {
 };
 
 onMounted(() => {
-  checkTrial();
+  checkStatus();
 });
 </script>
 
 <style scoped>
-/* Optional: Smooth scrolling for the whole page */
 html {
   scroll-behavior: smooth;
 }

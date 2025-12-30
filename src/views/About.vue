@@ -1,105 +1,98 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col">
-
-    <!-- HERO / ABOUT HEADER -->
-    <section class="bg-white shadow-md">
-      <div class="max-w-5xl mx-auto px-6 py-16 text-center">
-        <h1 class="text-5xl font-extrabold text-gray-800 mb-4">
-          About MyDocEase
+  <div class="min-h-screen bg-white flex flex-col font-sans antialiased text-gray-900 overflow-x-hidden">
+    
+    <section class="bg-white border-b border-gray-100">
+      <div class="max-w-5xl mx-auto px-6 py-20 md:py-32 text-center">
+        <h1 class="text-6xl md:text-8xl font-black text-gray-900 mb-8 tracking-tighter italic">
+          About.
         </h1>
-        <p class="text-xl text-gray-600 mb-6">
-          Effortless File Management, Made Simple
+        <p class="text-xl md:text-2xl font-bold text-gray-800 mb-6 tracking-tight">
+          Simple tools for complex document tasks.
         </p>
-        <p class="text-gray-500 max-w-3xl mx-auto">
-          MyDocEase is a web-based platform that streamlines the way you manage and work with digital files. Built for
-          simplicity,
-          reliability, and a seamless user experience, it makes everyday file tasks faster and easier.
+        <p class="text-gray-500 max-w-2xl mx-auto leading-relaxed font-medium">
+          MyDocEase is a focused platform built to refine the way you interact with digital documents. 
+          We prioritize utility, speed, and privacy above all else.
         </p>
       </div>
     </section>
 
-    <!-- MISSION & VISION -->
-    <section class="max-w-5xl mx-auto px-6 py-16">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div>
-          <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Mission</h2>
-          <p class="text-gray-600 mb-6">
-            Empowering users to manage their digital files effortlessly through intuitive, reliable, and practical tools
-          </p>
+    <section class="max-w-6xl mx-auto px-6 py-24 border-b border-gray-50">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <div class="space-y-12">
+          <div class="group">
+            <h2 class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-4 flex items-center gap-3">
+              <span class="w-8 h-[2px] bg-gray-800 inline-block"></span> 01 / Our Mission
+            </h2>
+            <p class="text-2xl font-bold text-gray-800 leading-snug">
+              To provide intuitive tools that handle digital files with zero friction and maximum reliability.
+            </p>
+          </div>
 
-          <h2 class="text-3xl font-bold text-gray-800 mb-4">Our Vision</h2>
-          <p class="text-gray-600">
-            To be the go-to platform where handling documents and files is seamless, efficient, and accessible for
-            everyone.
-          </p>
+          <div class="group">
+            <h2 class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-4 flex items-center gap-3">
+              <span class="w-8 h-[2px] bg-gray-800 inline-block"></span> 02 / Our Vision
+            </h2>
+            <p class="text-2xl font-bold text-gray-800 leading-snug">
+              To become the standard for professional, browser-based document management for everyone.
+            </p>
+          </div>
         </div>
 
-        <div class="flex justify-center">
-          <img src="/icons/logo-v2.png" alt="File Management Illustration"
-            class="w-120 h-120 object-contain opacity-90" />
+        <div class="flex justify-center lg:justify-end">
+          <div class="relative">
+            <div class="absolute -top-4 -right-4 w-full h-full border-4 border-gray-100 -z-10"></div>
+            <img src="/icons/logo-v2.png" alt="MyDocEase Logo"
+              class="w-48 h-48 md:w-64 md:h-64 object-contain grayscale opacity-80" />
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- WHY CHOOSE US -->
-    <section class="bg-gray-50 py-16">
-      <div class="max-w-5xl mx-auto px-6 text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-10">
-          Why Choose MyDocEase?
-        </h2>
+    <section class="bg-gray-50 py-24">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="mb-16 text-center md:text-left">
+          <h2 class="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 mb-2">Philosophy</h2>
+          <h3 class="text-4xl font-black text-gray-900">Why MyDocEase.</h3>
+        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="p-6 bg-white rounded-xl shadow hover:shadow-xl transition">
-            <img src="https://cdn-icons-png.flaticon.com/512/1041/1041916.png" class="w-16 mx-auto mb-4 opacity-80" />
-            <h3 class="text-xl font-semibold mb-2">Easy to Use</h3>
-            <p class="text-gray-500 text-sm">
-              A clean and intuitive interface that makes working with files simple
-              and straightforward.
-            </p>
-          </div>
-
-          <div class="p-6 bg-white rounded-xl shadow hover:shadow-xl transition">
-            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828665.png" class="w-16 mx-auto mb-4 opacity-80" />
-            <h3 class="text-xl font-semibold mb-2">Efficient Workflow</h3>
-            <p class="text-gray-500 text-sm">
-              Designed to help you complete file-related tasks quickly and
-              without unnecessary steps.
-            </p>
-          </div>
-
-          <div class="p-6 bg-white rounded-xl shadow hover:shadow-xl transition">
-            <img src="https://cdn-icons-png.flaticon.com/512/565/565547.png" class="w-16 mx-auto mb-4 opacity-80" />
-            <h3 class="text-xl font-semibold mb-2">Safe & Reliable</h3>
-            <p class="text-gray-500 text-sm">
-              Your files are handled with care, focusing on privacy,
-              stability, and reliability.
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-1">
+          <div v-for="item in whyUs" :key="item.title" 
+            class="p-10 bg-white border border-gray-100 hover:border-gray-800 transition-all duration-300">
+            <h4 class="text-xs font-black uppercase tracking-widest mb-4 text-gray-400">{{ item.title }}</h4>
+            <p class="text-sm text-gray-600 leading-relaxed font-medium">
+              {{ item.desc }}
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- DEVELOPER -->
-    <section class="max-w-5xl mx-auto px-6 py-16 text-center">
-      <h2 class="text-3xl font-bold text-gray-800 mb-6">
-        Developer
-      </h2>
-
-      <div class="flex flex-col items-center">
-        <img src="https://cdn-icons-png.flaticon.com/512/219/219983.png" class="w-32 h-32 rounded-full mb-4" />
-        <h3 class="text-2xl font-semibold">Lorem Ipsum</h3>
-        <p class="text-gray-500 text-sm">
-          Creator & Engineer of MyDocEase
-        </p>
-      </div>
-
-    </section>
 
   </div>
 </template>
 
-<script>
-export default {
-  name: "About",
-};
+<script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
+const whyUs = [
+  { 
+    title: 'Intuitive UX', 
+    desc: 'We remove the noise. A clean interface designed for direct action without unnecessary menus.' 
+  },
+  { 
+    title: 'Direct Logic', 
+    desc: 'Our workflow is linear. Upload, process, and download. No intermediate steps required.' 
+  },
+  { 
+    title: 'Data Integrity', 
+    desc: 'Files are treated with absolute privacy. We do not store your data beyond the active session.' 
+  }
+];
 </script>
+
+<style scoped>
+/* Menghilangkan scrollbar pada elemen tertentu jika perlu */
+::-moz-selection { background: #1f2937; color: white; }
+::selection { background: #1f2937; color: white; }
+</style>

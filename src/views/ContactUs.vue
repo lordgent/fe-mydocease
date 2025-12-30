@@ -1,72 +1,121 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col">
+  <div class="min-h-screen bg-white flex flex-col font-sans antialiased text-gray-900 overflow-x-hidden">
 
-    <!-- HERO / CONTACT HEADER -->
-    <section class="bg-gray-800 text-white">
-      <div class="max-w-7xl mx-auto px-6 py-24 text-center">
-        <h1 class="text-5xl sm:text-6xl font-extrabold mb-4">Get in Touch</h1>
-        <p class="text-lg sm:text-xl mb-2">
-          We'd love to hear your feedback, questions, or suggestions.
-        </p>
-        <p class="text-sm sm:text-base opacity-90">
-          Fill out the form below and our team will respond promptly.
-        </p>
+    <section class="bg-white border-b-2 border-gray-900">
+      <div class="max-w-7xl mx-auto px-6 py-20 md:py-32 text-center md:text-left flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+        <div class="max-w-2xl">
+          <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-6 italic">Contact.</h1>
+          <p class="text-xl font-bold text-gray-800 tracking-tight">
+            Tell us how we can improve.
+          </p>
+        </div>
+        <div class="text-gray-400 text-[10px] font-black uppercase tracking-[0.5em] pb-2">
+          Feedback / Support / Inquiry
+        </div>
       </div>
     </section>
 
-    <!-- CONTACT FORM SECTION -->
-    <section class="max-w-5xl w-full mx-auto px-6 py-20">
-      <form @submit.prevent="submitForm" class="bg-white p-12 rounded-3xl shadow-2xl space-y-8">
-
-        <div>
-          <label class="block text-gray-700 font-medium mb-2" for="email">Email Address</label>
-          <input v-model="email" type="email" id="email" placeholder="you@example.com" required
-            class="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-gray-800 transition" />
+    <section class="max-w-5xl w-full mx-auto px-6 py-16 md:py-24">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        
+        <div class="lg:col-span-4 space-y-12">
+          <div>
+            <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Direct Channel</h3>
+            <p class="text-sm font-bold text-gray-800">mydocease@gmail.com</p>
+          </div>
+          <div>
+            <h3 class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Inquiry Response</h3>
+            <p class="text-sm text-gray-600 font-medium leading-relaxed">
+              Our system processes inquiries within 24 standard operating hours.
+            </p>
+          </div>
         </div>
 
-        <div>
-          <label class="block text-gray-700 font-medium mb-2" for="message">Your Message</label>
-          <textarea v-model="message" id="message" placeholder="Write your message or suggestion here..." rows="7"
-            required
-            class="w-full px-6 py-4 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-gray-700 focus:border-gray-800 transition"></textarea>
-        </div>
+        <form @submit.prevent="submitForm" class="lg:col-span-8 space-y-10">
+          
+          <div class="space-y-4">
+            <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-gray-800" for="email">
+              Email Address
+            </label>
+            <input 
+              v-model="email" type="email" id="email" placeholder="YOUR@EMAIL.COM" required
+              class="w-full px-0 py-4 bg-transparent border-b-2 border-gray-200 focus:border-gray-900 outline-none transition-colors text-lg font-bold placeholder:text-gray-200" 
+            />
+          </div>
 
-        <button type="submit"
-          class="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 rounded-2xl shadow-md transition transform hover:-translate-y-0.5">
-          Send Message
-        </button>
+          <div class="space-y-4">
+            <label class="block text-[10px] font-black uppercase tracking-[0.3em] text-gray-800" for="message">
+              Message
+            </label>
+            <textarea 
+              v-model="message" id="message" placeholder="DESCRIBE YOUR INQUIRY OR FEEDBACK..." rows="5" required
+              class="w-full px-0 py-4 bg-transparent border-b-2 border-gray-200 focus:border-gray-900 outline-none transition-colors text-lg font-bold placeholder:text-gray-200 resize-none"
+            ></textarea>
+          </div>
 
-        <p v-if="successMessage" class="text-green-600 font-medium text-center mt-4">{{ successMessage }}</p>
-        <p v-if="errorMessage" class="text-red-600 font-medium text-center mt-4">{{ errorMessage }}</p>
-      </form>
+          <div class="pt-6">
+            <button type="submit"
+              class="group relative inline-flex items-center justify-center px-12 py-4 font-black text-white bg-gray-800 hover:bg-black transition-all w-full md:w-auto uppercase text-xs tracking-[0.2em]">
+              Send Message
+            </button>
+          </div>
+
+          <transition name="fade">
+            <div v-if="successMessage" class="p-6 border-2 border-gray-800 bg-gray-50 text-xs font-black uppercase tracking-widest text-center italic">
+              {{ successMessage }}
+            </div>
+          </transition>
+          <transition name="fade">
+            <div v-if="errorMessage" class="p-6 border-2 border-red-200 text-red-500 text-xs font-black uppercase tracking-widest text-center italic">
+              {{ errorMessage }}
+            </div>
+          </transition>
+          
+        </form>
+      </div>
     </section>
-
   </div>
 </template>
 
-<script>
-export default {
-  name: "Contact",
-  data() {
-    return {
-      email: "",
-      message: "",
-      successMessage: "",
-      errorMessage: "",
-    };
-  },
-  methods: {
-    submitForm() {
-      if (this.email && this.message) {
-        this.errorMessage = "";
-        this.successMessage = "Thank you! Your message has been sent successfully.";
-        this.email = "";
-        this.message = "";
-      } else {
-        this.errorMessage = "Please complete all fields before submitting.";
-        this.successMessage = "";
-      }
-    },
-  },
+<script setup>
+import { ref } from 'vue';
+
+const email = ref("");
+const message = ref("");
+const successMessage = ref("");
+const errorMessage = ref("");
+
+const submitForm = () => {
+  if (email.value && message.value) {
+    errorMessage.value = "";
+    successMessage.value = "Transmission successful. Thank you for your feedback.";
+    
+    // Reset form
+    const tempEmail = email.value;
+    email.value = "";
+    message.value = "";
+    
+    // Clear message after 5 seconds
+    setTimeout(() => {
+      successMessage.value = "";
+    }, 5000);
+  } else {
+    errorMessage.value = "Execution failed. Please populate all required fields.";
+    successMessage.value = "";
+  }
 };
 </script>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+/* Custom underline focus effect */
+input:focus, textarea:focus {
+  transform: translateY(-2px);
+}
+</style>

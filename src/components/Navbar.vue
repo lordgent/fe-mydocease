@@ -17,7 +17,6 @@
 
           <router-link to="/contact" class="text-gray-700 font-medium hover:text-gray-900">Contact Us</router-link>
 
-          <!-- 🔐 AUTH BUTTON -->
           <div v-if="!isAuthenticated" class="flex items-center space-x-3">
             <router-link to="/login"
               class="px-4 py-2 border border-gray-800 rounded-lg text-gray-800 hover:bg-gray-800 hover:text-white transition">
@@ -67,6 +66,9 @@
 
     <!-- Mobile Menu -->
     <div v-if="open" class="md:hidden bg-white shadow-md">
+      <div v-if="isAuthenticated">
+        <router-link to="/profile" class="block px-4 py-2">Profile</router-link>
+      </div>
       <router-link to="/about" class="block px-4 py-2">About</router-link>
       <router-link to="/contact" class="block px-4 py-2">Contact Us</router-link>
 
