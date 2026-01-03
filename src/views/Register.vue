@@ -33,11 +33,8 @@
             class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-gray-300 outline-none" />
         </div>
 
-        <button 
-          type="submit" 
-          :disabled="loading"
-          class="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition disabled:opacity-50"
-        >
+        <button type="submit" :disabled="loading"
+          class="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition disabled:opacity-50">
           {{ loading ? 'Registering...' : 'Register' }}
         </button>
       </form>
@@ -56,6 +53,7 @@
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { AuthService } from '../services/auth.service';
+import MESSAGES from '@/utils/message';
 
 const router = useRouter();
 const loading = ref(false);
@@ -69,7 +67,7 @@ const form = reactive({
 
 const handleRegister = async () => {
   if (form.password !== form.confirmPassword) {
-    window.$alert("Password and confirmation do not match", "error");
+    window.$alert(MESSAGES.AUTH.FORGOT_PASSWORD_MISMATCH.message, "error");
     return;
   }
 
@@ -88,7 +86,7 @@ const handleRegister = async () => {
       query: { email: form.email }
     });
   } catch (err) {
-    window.$alert(err.response?.data?.message || err.message, "error");
+    window.$alert(MESSAGES.SYSTEM.SERVER_ERROR.message, "error");
   } finally {
     loading.value = false;
   }

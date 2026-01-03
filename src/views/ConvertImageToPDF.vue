@@ -74,6 +74,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { getDeviceInfo } from "../utils/DeviceInfo";
 import { DocumentService } from "../services/document.service"; 
 import QueueList from "../components/QueueList.vue";
+import MESSAGES from "@/utils/message";
 
 const { deviceId, address } = getDeviceInfo();
 
@@ -125,7 +126,7 @@ const upload = async () => {
     fileName.value = "";
     getList(); 
   } catch (err) {
-    alert("Upload Failed: " + (err.response?.data?.message || "Internal Server Error"));
+    window.$alert(MESSAGES.SYSTEM.SERVER_ERROR.message + " OR " +  MESSAGES.SUBSCRIPTION.NONE.message, "error");
   } finally {
     loading.value = false;
   }
@@ -140,9 +141,25 @@ const retryFile = async (id) => {
   }
 };
 
-const downloadFile = (file) => {
-  DocumentService.download(file.file_url, file.filename);
+const downloadFile = async (file) => {
+  try {
+    const res = await fetch(file.file_url);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file.filename || "output.jpg";
+    a.target = "_blank";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    console.error(e);
+  }
 };
+
+
 
 let intervalId = null;
 onMounted(() => {

@@ -10,34 +10,21 @@
 
       <form @submit.prevent="handleVerify" class="space-y-6">
         <div class="flex justify-between gap-2">
-          <input
-            v-for="(digit, index) in 6"
-            :key="index"
-            :id="'otp-' + index"
-            v-model="otp[index]"
-            type="text"
+          <input v-for="(digit, index) in 6" :key="index" :id="'otp-' + index" v-model="otp[index]" type="text"
             maxlength="1"
             class="w-12 h-12 text-center text-xl font-bold border rounded-lg focus:ring focus:ring-gray-300 outline-none transition"
-            @input="focusNext($event, index)"
-            @keydown.delete="focusPrev($event, index)"
-          />
+            @input="focusNext($event, index)" @keydown.delete="focusPrev($event, index)" />
         </div>
 
-        <button
-          type="submit"
-          :disabled="loading"
-          class="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition disabled:bg-gray-400"
-        >
+        <button type="submit" :disabled="loading"
+          class="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition disabled:bg-gray-400">
           {{ loading ? 'Verifying...' : 'Verify Account' }}
         </button>
       </form>
 
       <p class="text-center text-sm text-gray-500 mt-6">
         Didn't receive the code?
-        <span
-          class="text-gray-800 font-semibold cursor-pointer hover:underline"
-          @click="resendOtp"
-        >
+        <span class="text-gray-800 font-semibold cursor-pointer hover:underline" @click="resendOtp">
           Resend
         </span>
       </p>
@@ -47,6 +34,7 @@
 
 <script>
 import api from "@/services/api";
+import MESSAGES from "@/utils/message";
 
 export default {
   name: "VerifyOtp",
@@ -54,7 +42,7 @@ export default {
     return {
       loading: false,
       otp: ["", "", "", "", "", ""],
-      email: this.$route.query.email || "", 
+      email: this.$route.query.email || "",
     };
   },
   methods: {
@@ -83,10 +71,10 @@ export default {
           otp_code: fullOtp,
         });
 
-        alert("Email verified successfully!");
+        window.$alert(MESSAGES.AUTH.EMAIL_VERIFIED.message, "success");
         this.$router.push("/login");
       } catch (err) {
-        alert(err.response?.data?.message || "Verification failed");
+        window.$alert(MESSAGES.SYSTEM.SERVER_ERROR.message, "error");
       } finally {
         this.loading = false;
       }
@@ -94,9 +82,8 @@ export default {
     async resendOtp() {
       try {
         await api.post("/resend-otp", { email: this.email });
-        alert("New OTP code has been sent!");
       } catch (err) {
-        alert("Failed to resend OTP");
+        window.$alert(MESSAGES.SYSTEM.SERVER_ERROR.message, "error");
       }
     }
   },

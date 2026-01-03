@@ -69,6 +69,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { getDeviceInfo } from "../utils/DeviceInfo";
 import QueueList from '../components/QueueList.vue';
 import { DocumentService } from "../services/document.service";
+import MESSAGES from '@/utils/message';
 
 const { deviceId, address } = getDeviceInfo();
 const token = localStorage.getItem("token");
@@ -87,6 +88,25 @@ const onFile = (e) => {
   reader.onload = () => imageUrl.value = reader.result
   reader.readAsDataURL(file)
 }
+
+const downloadFile = async (file) => {
+  try {
+    const res = await fetch(file.file_url);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file.filename || "output.jpg";
+    a.target = "_blank";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 
 const getListCompress = async () => {
   try {
@@ -129,7 +149,7 @@ const upload = async () => {
     console.log("DATA SENT TO BACKEND:", data);
     const res = await DocumentService.upload(data)
   } catch (err) {
-    console.error("Upload Failed:", err);
+    window.$alert(MESSAGES.SYSTEM.SERVER_ERROR.message + " OR " +  MESSAGES.SUBSCRIPTION.NONE.message, "error");
   }
 };
 

@@ -4,54 +4,65 @@
     <!-- Header -->
     <div class="max-w-4xl w-full text-center mb-12">
       <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-2">
-        Word to PDF Converter
+        Merge PDF
       </h1>
       <p class="text-gray-600 sm:text-lg">
-        Convert your Word documents (.doc, .docx) to PDF instantly.
+        Combine multiple PDF files into one document.
       </p>
     </div>
 
     <!-- Main Content -->
     <div class="w-full max-w-6xl flex flex-col md:flex-row gap-8">
 
-      <!-- LEFT SIDE -->
+      <!-- LEFT -->
       <div class="flex-1 flex flex-col gap-6">
 
         <!-- Upload Card -->
         <div class="w-full bg-white rounded-2xl shadow-md p-8 flex flex-col items-center hover:shadow-lg transition">
-          
+
           <!-- Label + Input File -->
           <label 
             class="relative cursor-pointer bg-gray-800 hover:bg-gray-900 text-white font-semibold px-8 py-3 rounded-xl shadow-md transition">
-            Choose Word File
+            Choose PDF Files
             <input 
               type="file" 
-              accept=".doc,.docx" 
-              @change="onFile"
+              accept="application/pdf" 
+              multiple 
+              @change="onFiles" 
               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
           </label>
 
-          <p v-if="fileName" class="mt-3 text-gray-700 font-medium">
-            {{ fileName }}
+          <p class="text-sm text-gray-500 mt-2">
+            On some mobile devices, you may need to select files one by one.
           </p>
+
+          <!-- File List -->
+          <ul v-if="files.length" class="mt-4 w-full text-gray-700">
+            <li v-for="(f, i) in files" :key="i" class="flex justify-between items-center py-2 border-b">
+              <span>📄 {{ f.name }}</span>
+              <button @click="removeFile(i)" class="text-red-500 hover:underline text-sm">
+                Remove
+              </button>
+            </li>
+          </ul>
         </div>
 
-        <!-- Preview -->
+        <!-- Preview / Merge Button -->
         <transition name="fade">
-          <div v-if="file"
+          <div v-if="files.length >= 2"
             class="w-full bg-white rounded-2xl shadow-md p-8 flex flex-col items-center gap-6 hover:shadow-lg transition">
 
             <h2 class="text-2xl font-semibold text-gray-900">
-              Ready to Convert
+              Ready to Merge
             </h2>
 
-            <div class="flex items-center gap-3 text-gray-700">
-              📄 <span>{{ fileName }}</span>
-            </div>
+            <p class="text-gray-700">
+              {{ files.length }} PDF files selected
+            </p>
 
             <button @click="upload"
               class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition">
-              Convert to PDF
+              Merge PDFs
             </button>
 
           </div>
@@ -59,7 +70,7 @@
 
       </div>
 
-      <!-- RIGHT SIDE -->
+      <!-- RIGHT -->
       <div class="flex-1 bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">
           Files in Progress
@@ -74,77 +85,66 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import QueueList from "../components/QueueList.vue";
 import { DocumentService } from "../services/document.service";
 import { getDeviceInfo } from "../utils/DeviceInfo";
-import QueueList from "../components/QueueList.vue";
 import MESSAGES from "@/utils/message";
 
 const { deviceId, address } = getDeviceInfo();
 
-const file = ref(null);
-const fileBase64 = ref(null);
-const fileName = ref("");
+const files = ref([]);
 const queue = ref([]);
 
-// Saat pilih file
-const onFile = (e) => {
-  const selected = e.target.files[0];
-  if (!selected) return;
-
-  file.value = selected;
-  fileName.value = selected.name;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    fileBase64.value = reader.result;
-  };
-  reader.readAsDataURL(selected);
+// Tambahkan batch file (mobile-friendly)
+const onFiles = (e) => {
+  const selected = Array.from(e.target.files || []);
+  files.value.push(...selected);
 };
 
-// Upload file
+// Remove file dari list
+const removeFile = (index) => {
+  files.value.splice(index, 1);
+};
+
+// Convert file ke base64
+const toBase64 = (file) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.readAsDataURL(file);
+  });
+};
+
+// Upload & merge PDF
 const upload = async () => {
-  if (!file.value) return;
+  try {
+    if (files.value.length < 2) return;
 
-  const reader = new FileReader();
-  reader.onload = async () => {
-    try {
-      const base64 = reader.result;
-
-      const data = {
-        image_base64: base64,
-        mode: "word_to_pdf",
-        device_id: deviceId,
-        device_address: address,
-        original_filename: fileName.value,
-      };
-
-      await DocumentService.upload(data);
-
-      // Reset file setelah upload
-      file.value = null;
-      fileName.value = "";
-      fileBase64.value = null;
-
-      // Refresh queue
-      await getList();
-
-    } catch (error) {
-      window.$alert(
-        MESSAGES.SYSTEM.SERVER_ERROR.message + " OR " + MESSAGES.SUBSCRIPTION.NONE.message,
-        "error"
-      );
+    const pdfs = [];
+    for (const file of files.value) {
+      pdfs.push(await toBase64(file));
     }
-  };
 
-  reader.readAsDataURL(file.value);
+    await DocumentService.mergePdf({
+      device_id: deviceId,
+      device_address: address,
+      pdfs
+    });
+
+    files.value = [];
+    await getList();
+
+  } catch (error) {
+    window.$alert(
+      MESSAGES.SYSTEM.SERVER_ERROR.message + " OR " +  MESSAGES.SUBSCRIPTION.NONE.message,
+      "error"
+    );
+  }
 };
 
-// Ambil daftar queue
 const getList = async () => {
-  const res = await DocumentService.getQueue("word_to_pdf", deviceId);
-  const data = res.images || [];
-
-  queue.value = data.map(item => ({
+  const res = await DocumentService.getQueue("merge_pdf", deviceId);
+  queue.value = (res.images || []).map(item => ({
     id: item.id,
     filename: item.original_filename,
     file_url: item.processed_url,
@@ -153,7 +153,7 @@ const getList = async () => {
   }));
 };
 
-// Retry
+// Retry job
 const retryFile = async (id) => {
   await DocumentService.retry(id);
   await getList();
@@ -178,8 +178,9 @@ const downloadFile = async (file) => {
 };
 
 
-let intervalId;
 
+
+let intervalId;
 onMounted(() => {
   getList();
   intervalId = setInterval(getList, 3000);

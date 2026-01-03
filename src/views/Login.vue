@@ -50,6 +50,7 @@
 
 <script>
 import { AuthService } from '../services/auth.service'
+import MESSAGES from '@/utils/message';
 
 export default {
   name: "Login",
@@ -70,12 +71,11 @@ export default {
 
       try {
         await AuthService.login(this.form);
-        window.$alert("Login berhasil!", "success");
+        window.$alert(MESSAGES.AUTH.SUCCESS.message, "success");
         window.location.href = "/";
       } catch (err) {
         const message =
-          err.response?.data?.message ||
-          "Login gagal, periksa email dan password";
+          MESSAGES.AUTH.INVALID.message;
         this.error = message;
         window.$alert(message, "error");
       } finally {

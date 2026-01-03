@@ -19,13 +19,13 @@
           </button>
 
           <h2 class="text-xl md:text-3xl font-black uppercase tracking-tight pr-10">Choose Your Plan</h2>
-          <p class="text-gray-500 text-xs md:text-sm mt-2">Streamline your document workflow and boost your productivity today.</p>
+          <p class="text-gray-500 text-xs md:text-sm mt-2">Pick a plan that fits you and get started boosting your workflow today.</p>
         </div>
 
         <div class="flex-1 overflow-y-auto p-6 md:p-8 custom-scrollbar">
           <div v-if="loading" class="py-20 text-center">
             <div class="animate-spin inline-block w-10 h-10 border-4 border-gray-800 border-t-transparent rounded-full mb-4"></div>
-            <p class="text-gray-500 font-medium">Memproses data...</p>
+            <p class="text-gray-500 font-medium">Processing data...</p>
           </div>
 
           <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -69,7 +69,7 @@
                     </li>
                     <li class="flex items-center gap-2">
                       <span class="text-emerald-500 font-bold">✔</span> 
-                      <span>Full Features Access</span>
+                      <span>Full Feature Access</span>
                     </li>
                     <li class="flex items-center gap-2">
                       <span class="text-emerald-500 font-bold">✔</span> 
@@ -108,6 +108,7 @@
   </transition>
 </template>
 
+
 <script setup>
 import { ref, onMounted, defineProps, defineEmits } from 'vue';
 
@@ -132,7 +133,7 @@ const selectedPlan = ref(null);
 const fetchPlans = async () => {
   loading.value = true;
   try {
-    const res = await fetch(`http://localhost:8000/api/v1/subscriptions`);
+    const res = await fetch(`https://www.apidev.mydocease.my.id/api/v1/subscriptions`);
     const responseData = await res.json(); 
     plans.value = responseData.data || responseData; 
   } catch (error) {
@@ -165,7 +166,7 @@ const confirmSubscription = async () => {
   loading.value = true;
 
   try {
-    const response = await fetch(`http://localhost:8000/api/v1/subscription/create`, {
+    const response = await fetch(`https://www.apidev.mydocease.my.id/api/v1/subscription/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

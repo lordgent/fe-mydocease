@@ -31,6 +31,7 @@ import { getDeviceInfo } from "../utils/DeviceInfo";
 import PDFSignature from '../components/PDFSignature.vue';
 import QueueList from '../components/QueueList.vue';
 import { DocumentService } from "../services/document.service";
+import MESSAGES from '@/utils/message';
 
 const { deviceId, address } = getDeviceInfo();
 const loadingFetch = ref(true)
@@ -42,7 +43,7 @@ async function handlePDFExport(data) {
   try {
     await uploadToBackend(data.base64, data.filename);
   } catch (error) {
-    console.error('Failed to upload PDF:', error);
+    window.$alert(MESSAGES.SYSTEM.SERVER_ERROR.message + " OR " +  MESSAGES.SUBSCRIPTION.NONE, "error");
   }
 }
 
@@ -64,7 +65,7 @@ async function uploadToBackend(pdfBase64, filename) {
     await getListSignedPDFs();
 
   } catch (err) {
-    console.error("Upload Failed:", err);
+    window.$alert(MESSAGES.SYSTEM.SERVER_ERROR.message + " OR " +  MESSAGES.SUBSCRIPTION.NONE.message, "error");
   }
 }
 
@@ -103,15 +104,24 @@ async function retryFile(id) {
   }
 }
 
-// Download File
-function downloadFile(file) {
-  const a = document.createElement('a');
-  a.href = file.file_url;
-  a.download = file.filename || "signed-document.pdf";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-}
+const downloadFile = async (file) => {
+  try {
+    const res = await fetch(file.file_url);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file.filename || "output.jpg";
+    a.target = "_blank";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 
 // Polling
 let intervalId = null;

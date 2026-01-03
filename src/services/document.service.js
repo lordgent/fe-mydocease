@@ -16,6 +16,11 @@ async getQueue(mode, deviceId = null) {
     return response.data;
   },
 
+  async mergePdf(payload) {
+    const response = await api.post('/v1/docs/merge-pdf', payload);
+    return response.data;
+  },
+
   async retry(id) {
     const response = await api.post(`/v1/docs/retry/${id}`);
     return response.data;

@@ -61,6 +61,7 @@ import ImageCropper from '../components/ImageCropper.vue'
 import { getDeviceInfo } from "../utils/DeviceInfo";
 import QueueList from '../components/QueueList.vue';
 import { DocumentService } from "../services/document.service";
+import MESSAGES from '@/utils/message';
 
 const { deviceId, address } = getDeviceInfo();
 
@@ -90,14 +91,24 @@ const retryFile = async (id) => {
   getListCropPage();
 }
 
-const downloadFile = (file) => {
-  const a = document.createElement('a');
-  a.href = file.file_url;
-  a.download = file.filename || "download";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+const downloadFile = async (file) => {
+  try {
+    const res = await fetch(file.file_url);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = file.filename || "output.jpg";
+    a.target = "_blank";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    console.error(e);
+  }
 };
+
 
 
 const getListCropPage = async () => {
@@ -140,6 +151,7 @@ const upload = async () => {
   } catch (err) {
     result.value = null;
     imageUrl.value = null;
+    window.$alert(MESSAGES.SYSTEM.SERVER_ERROR.message + " OR " +  MESSAGES.SUBSCRIPTION.NONE.message, "error");
   }
 }
 

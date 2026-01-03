@@ -88,6 +88,7 @@ import SubscriptionList from "@/components/SubscriptionList.vue";
 import { ref, onMounted } from "vue";
 
 const tools = [
+  { title: 'Merge PDF', desc: 'Apply secure digital signatures to your PDF documents.', icon: '/icons/merge-pdf.png', path: '/editor/merge-pdf' },
   { title: 'Sign PDF', desc: 'Apply secure digital signatures to your PDF documents.', icon: '/icons/signed.png', path: '/editor/signed-pdf' },
   { title: 'Word to PDF', desc: 'Convert document formats while preserving layout integrity.', icon: '/icons/word-to-pdf.png', path: '/editor/word-to-pdf' },
   { title: 'Image to PDF', desc: 'Consolidate multiple image formats into a single PDF file.', icon: '/icons/img-to-pdf.png', path: '/editor/convert-image-pdf' },
@@ -118,7 +119,7 @@ const checkStatus = async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:8000/api/v1/status-subscription`, {
+    const res = await fetch(`https://www.apidev.mydocease.my.id/api/v1/status-subscription`, {
       method: "GET",
       headers: {
         "Accept": "application/json",

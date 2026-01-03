@@ -12,6 +12,7 @@ import Register from '@/views/Register.vue'
 import Profile from '@/views/Profile.vue'
 import VerifyOtp from '@/views/VerifyOtp.vue'
 import ForgotPassword from '@/views/ForgotPassword.vue'
+import MergePdf from '@/views/MergePdf.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +23,7 @@ const router = createRouter({
   { path: '/editor/convert-image-pdf', component: ConvertImageToPDF,  meta: { requiresAuth: true },  },
   { path: '/editor/signed-pdf', component: SignedPDF,  meta: { requiresAuth: true },  },
   { path: '/editor/word-to-pdf', component: WordToPdf,  meta: { requiresAuth: true },  },
+  { path: '/editor/merge-pdf', component: MergePdf,  meta: { requiresAuth: true },  },
   { path: '/profile', component: Profile,  meta: { requiresAuth: true },  },
   { path: '/about', component: About },
   { path: '/contact', component: ContactUs },
