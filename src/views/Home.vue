@@ -4,7 +4,7 @@
     <section class="bg-white">
       <div class="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-28 text-center">
         <div class="inline-block px-3 py-1.5 mb-6 md:mb-10 text-[9px] md:text-[11px] font-black tracking-[0.2em] text-gray-800 uppercase border-2 border-gray-800 rounded">
-          Status: Ready for processing
+          Ready for processing
         </div>
         
         <h1 class="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black text-gray-900 mb-6 md:mb-8 tracking-tighter leading-none">
@@ -86,6 +86,7 @@
 <script setup>
 import SubscriptionList from "@/components/SubscriptionList.vue";
 import { ref, onMounted } from "vue";
+const apiUrl = import.meta.env.VITE_API_URL
 
 const tools = [
   { title: 'Merge PDF', desc: 'Apply secure digital signatures to your PDF documents.', icon: '/icons/merge-pdf.png', path: '/editor/merge-pdf' },
@@ -119,7 +120,7 @@ const checkStatus = async () => {
   }
 
   try {
-    const res = await fetch(`https://www.apidev.mydocease.my.id/api/v1/status-subscription`, {
+    const res = await fetch(`${apiUrl}/v1/status-subscription`, {
       method: "GET",
       headers: {
         "Accept": "application/json",

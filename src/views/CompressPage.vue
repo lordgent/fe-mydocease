@@ -91,22 +91,11 @@ const onFile = (e) => {
 
 const downloadFile = async (file) => {
   try {
-    const res = await fetch(file.file_url);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = file.filename || "output.jpg";
-    a.target = "_blank";
-    a.click();
-
-    URL.revokeObjectURL(url);
+    await DocumentService.download(file);
   } catch (e) {
-    console.error(e);
+      window.$alert(MESSAGES.SYSTEM.DOWNLOAD_ERROR.message, "error");
   }
 };
-
 
 const getListCompress = async () => {
   try {

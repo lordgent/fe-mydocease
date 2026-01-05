@@ -75,6 +75,7 @@ import { getDeviceInfo } from "../utils/DeviceInfo";
 import { DocumentService } from "../services/document.service"; 
 import QueueList from "../components/QueueList.vue";
 import MESSAGES from "@/utils/message";
+const apiUrl = import.meta.env.VITE_API_URL
 
 const { deviceId, address } = getDeviceInfo();
 
@@ -82,6 +83,8 @@ const imageUrl = ref(null);
 const fileName = ref("");
 const queue = ref([]);
 const loading = ref(false);
+const isDownloading = ref(false)
+
 
 const onFile = (e) => {
   const file = e.target.files[0];
@@ -143,19 +146,9 @@ const retryFile = async (id) => {
 
 const downloadFile = async (file) => {
   try {
-    const res = await fetch(file.file_url);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = file.filename || "output.jpg";
-    a.target = "_blank";
-    a.click();
-
-    URL.revokeObjectURL(url);
+    await DocumentService.download(file);
   } catch (e) {
-    console.error(e);
+      window.$alert(MESSAGES.SYSTEM.DOWNLOAD_ERROR.message, "error");
   }
 };
 
@@ -164,7 +157,7 @@ const downloadFile = async (file) => {
 let intervalId = null;
 onMounted(() => {
   getList();
-  intervalId = setInterval(getList, 3000);
+  intervalId = setInterval(getList,4000);
 });
 
 onUnmounted(() => {

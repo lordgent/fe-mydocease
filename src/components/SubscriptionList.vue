@@ -111,6 +111,7 @@
 
 <script setup>
 import { ref, onMounted, defineProps, defineEmits } from 'vue';
+const apiUrl = import.meta.env.VITE_API_URL
 
 const props = defineProps({
   show: Boolean,
@@ -133,7 +134,7 @@ const selectedPlan = ref(null);
 const fetchPlans = async () => {
   loading.value = true;
   try {
-    const res = await fetch(`https://www.apidev.mydocease.my.id/api/v1/subscriptions`);
+    const res = await fetch(`${apiUrl}/v1/subscriptions`);
     const responseData = await res.json(); 
     plans.value = responseData.data || responseData; 
   } catch (error) {
@@ -166,7 +167,7 @@ const confirmSubscription = async () => {
   loading.value = true;
 
   try {
-    const response = await fetch(`https://www.apidev.mydocease.my.id/api/v1/subscription/create`, {
+    const response = await fetch(`${apiUrl}/v1/subscription/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

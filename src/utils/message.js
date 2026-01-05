@@ -37,6 +37,11 @@ AUTH: {
   },
 
   SYSTEM: {
+    DOWNLOAD_ERROR: {
+      status: 'error',
+      code: 'server_error',
+      message: 'Failed to download the file due to a server error. Please try again later.'
+    },
     SERVER_ERROR: { status: 'error', code: 'server_error', message: 'Oops! Something went wrong on our side. Try again later.' },
     FILE_NOT_FOUND: { status: 'error', code: 'file_not_found', message: 'File not found on the server.' },
     INVALID_REQUEST: { status: 'error', code: 'invalid_request', message: 'Invalid request. Check your input and try again.' },
