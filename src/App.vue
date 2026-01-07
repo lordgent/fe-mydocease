@@ -18,5 +18,6 @@ window.$alert = (message, type = "success", duration = 3000) => {
     globalAlert.value.trigger(message, type, duration);
   }
 };
+
 </script>
 

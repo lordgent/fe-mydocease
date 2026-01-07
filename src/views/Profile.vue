@@ -135,9 +135,7 @@ const getListTransaction = async () => {
   }
 };
 
-/**
- * LOGIC HELPERS
- */
+
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
   const options = { day: '2-digit', month: 'short', year: 'numeric' };
@@ -159,7 +157,6 @@ const statusStyles = (status) => {
   else if (s === 'pending') {
     return 'bg-white text-gray-400 border-gray-200';
   } 
-  // Status Gagal: Abu-abu Sangat Muda
   else {
     return 'bg-gray-50 text-gray-300 border-transparent';
   }
@@ -172,7 +169,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Optional: Menghilangkan scrollbar di tabel mobile */
 .overflow-x-auto {
   -ms-overflow-style: none;
   scrollbar-width: none;
