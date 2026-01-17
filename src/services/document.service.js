@@ -20,6 +20,10 @@ async getQueue(mode, deviceId = null) {
     const response = await api.post('/v1/docs/merge-pdf', payload);
     return response.data;
   },
+  async watermarkPdf(payload) {
+    const response = await api.post('/v1/docs/watermark-pdf', payload);
+    return response.data;
+  },
 
   async retry(id) {
     const response = await api.post(`/v1/docs/retry/${id}`);

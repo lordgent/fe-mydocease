@@ -44,7 +44,7 @@
 
             <button
               @click="upload"
-              class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition">
+              class="px-8 py-3 bg-gray-800  text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition">
               Convert to PDF
             </button>
 

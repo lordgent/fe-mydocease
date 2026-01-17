@@ -25,10 +25,14 @@
 
         <div class="flex flex-col sm:flex-row justify-center items-center gap-4 md:gap-6 px-6">
           
-          <button v-if="subscriptionData.status !== 'active'" @click="isModalOpen = true"
-            class="w-full sm:w-auto bg-gray-900 text-white font-black px-10 py-4 md:px-12 md:py-5 rounded-full hover:bg-black transition-all duration-300 uppercase text-[10px] md:text-xs tracking-widest flex flex-col items-center">
-            <span>Upgrade for Unlimited</span>
-          </button>
+        <button
+          v-if="subscriptionData.status !== 'active'"
+          @click="handleUpgradeClick"
+          class="w-full sm:w-auto bg-gray-900 text-white font-black px-10 py-4 md:px-12 md:py-5 rounded-full hover:bg-black transition-all duration-300 uppercase text-[10px] md:text-xs tracking-widest flex flex-col items-center"
+        >
+          <span>Upgrade for Unlimited</span>
+        </button>
+
 
           <div v-else class="w-full sm:w-auto px-10 py-4 md:px-12 md:py-5 rounded-full bg-green-50 border-2 border-green-500 text-green-700 font-black text-[10px] md:text-xs uppercase tracking-widest">
             Unlimited Access Active
@@ -97,6 +101,12 @@ const tools = [
   { title: 'Protect PDF', desc: 'Secure your documents with a password to prevent unauthorized access.', icon: '/icons/password-pdf.png', path: '/editor/security-pdf' },
   { title: 'Sign PDF', desc: 'Apply secure digital signatures to your PDF documents.', icon: '/icons/signed.png', path: '/editor/signed-pdf' },
   { title: 'Word to PDF', desc: 'Convert document formats while preserving layout integrity.', icon: '/icons/word-to-pdf.png', path: '/editor/word-to-pdf' },
+  { 
+    title: 'Watermark PDF', 
+    desc: 'Add text or image watermark to protect and brand your PDF documents.', 
+    icon: '/icons/watermark_pdf.png', 
+    path: '/editor/watermark-pdf' 
+  },
   { title: 'Image to PDF', desc: 'Consolidate multiple image formats into a single PDF file.', icon: '/icons/img-to-pdf.png', path: '/editor/convert-image-pdf' },
   { title: 'Crop Utility', desc: 'Refine and adjust image dimensions with precision.', icon: '/icons/crop.png', path: '/editor/crop' },
   { title: 'Compression', desc: 'Optimize file size for efficient storage and sharing.', icon: '/icons/compress.png', path: '/editor/compress' },
@@ -117,6 +127,15 @@ const subscriptionData = ref({
   status: 'none',
   days_left: 0
 });
+
+const handleUpgradeClick = () => {
+  if (!token) {
+    window.location.href = '/login';
+    return;
+  }
+  isModalOpen.value = true;
+};
+
 
 const checkStatus = async () => {
   if (!token) return;

@@ -14,6 +14,7 @@ import VerifyOtp from '@/views/VerifyOtp.vue'
 import ForgotPassword from '@/views/ForgotPassword.vue'
 import MergePdf from '@/views/MergePdf.vue'
 import SecurityPdf from '@/views/SecurityPdf.vue'
+import AddWatermarkPdf from '@/views/AddWatermarkPdf.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,7 @@ const router = createRouter({
   { path: '/editor/word-to-pdf', component: WordToPdf,  meta: { requiresAuth: true },  },
   { path: '/editor/merge-pdf', component: MergePdf,  meta: { requiresAuth: true },  },
   { path: '/editor/security-pdf', component: SecurityPdf,  meta: { requiresAuth: true },  },
+   { path: '/editor/watermark-pdf', component: AddWatermarkPdf,  meta: { requiresAuth: true },  },
   { path: '/profile', component: Profile,  meta: { requiresAuth: true },  },
   { path: '/about', component: About },
   { path: '/contact', component: ContactUs },
